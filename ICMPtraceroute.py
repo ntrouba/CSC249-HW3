@@ -14,6 +14,7 @@ ICMP_ECHO_REQUEST = 8
 MAX_HOPS = 30
 TIMEOUT = 2.0
 TRIES = 2
+ID = os.getpid() & 0xffff
 
 # The packet that we shall send to each router along the path is the ICMP echo
 # request packet, which is exactly what we had used in the ICMP ping exercise.
@@ -30,23 +31,19 @@ def build_packet():
         # TODO: Make the header in a similar way to the ping exercise.
         # Append checksum to the header.
 	myChecksum = 0
-	
-	# Make a dummy header with a 0 checksum.     
-	# struct -- Interpret strings as packed binary data     
-	header = struct.pack('bbHHh', ICMP_ECHO_REQUEST, 0, myChecksum,  1)
+	    
+	header = struct.pack('bbHHh', ICMP_ECHO_REQUEST, 0, myChecksum, ID,  1)
 	data = struct.pack('d', time.time())
-
-	# Calculate the checksum on the dfata and the dummy header.     
+	    
 	myChecksum = checksum(header + data)          
-
-	# Get the right checksum, and put in the header     
+   
 	if sys.platform == 'darwin':         
 		myChecksum = htons(myChecksum) & 0xffff       
-		#Convert 16-bit integers from host to network byte order.     
+		#Converts 16-bit integers from host to network byte order.     
 	else:         
 		myChecksum = htons(myChecksum)              
 
-	header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum,  1)     	
+	header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID,  1)     	
 	packet = header + data        
 	return packet  
         
@@ -102,7 +99,7 @@ def get_route(hostname):
                 # Fill in start #
                 #---------------#
 
-                    #TODO: Fetch the icmp type from the IP packet
+                #TODO: Fetch the icmp type from the IP packet
                 types  = struct.unpack('b', recvPacket[20:21])
                 #-------------#
                 # Fill in end #

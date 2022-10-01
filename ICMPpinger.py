@@ -1,6 +1,8 @@
 # Attribution: this assignment is based on ICMP Pinger Lab from Computer Networking: a Top-Down Approach by Jim Kurose and Keith Ross. 
 # It was modified for use in CSC249: Networks at Smith College by R. Jordan Crouser in Fall 2022
 
+
+
 from socket import * 
 import os
 import sys 
@@ -65,11 +67,10 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         #---------------#
 
             # TODO: Fetch the ICMP header from the IP packet
-        #accessing icmp header from packet
+        
         icmpHeader = recPacket[20:28]
         icmpType, code, mychecksum, packetID, sequence = struct.unpack("bbHHh", icmpHeader)
-
-        #verify the ID of packet
+ 
         if icmpType != 8 and packetID == ID:
             bytesInDouble = struct.calcsize("d")
             timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
@@ -141,10 +142,12 @@ def ping(host, timeout=1):
 
     # Send ping requests to a server separated by approximately one second 
     while True :
+        print("The RTT is:") 
         delay = doOnePing(dest, timeout) 
         print(delay)
         time.sleep(1) # one second 
     return delay
 
 # Runs program
-ping("google.com")
+if __name__ == "__main__":
+    ping ("google.com")
